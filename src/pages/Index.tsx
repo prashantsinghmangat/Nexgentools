@@ -2,6 +2,7 @@ import { Calculator, QrCode, Cloud, Puzzle, DollarSign, BrainCircuit, Image, Glo
 import { ToolCard } from "@/components/ToolCard";
 import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
+import { useSearchParams } from "react-router-dom";
 
 const tools = [
   {
@@ -77,6 +78,15 @@ const tools = [
 ];
 
 const Index = () => {
+  const [searchParams] = useSearchParams();
+  const searchQuery = searchParams.get('search')?.toLowerCase() || '';
+
+  const filteredTools = tools.filter(tool => 
+    tool.title.toLowerCase().includes(searchQuery) ||
+    tool.description.toLowerCase().includes(searchQuery) ||
+    tool.category.toLowerCase().includes(searchQuery)
+  );
+
   return (
     <div className="min-h-screen flex flex-col">
       <Header />
@@ -94,9 +104,14 @@ const Index = () => {
           </section>
 
           <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {tools.map((tool) => (
+            {filteredTools.map((tool) => (
               <ToolCard key={tool.path} {...tool} />
             ))}
+            {filteredTools.length === 0 && (
+              <div className="col-span-full text-center py-8 text-gray-500">
+                No tools found matching your search criteria.
+              </div>
+            )}
           </section>
         </div>
       </main>
