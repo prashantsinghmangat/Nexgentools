@@ -20,39 +20,48 @@ import IPFinder from "./pages/IPFinder";
 import TextComparer from "./pages/TextComparer";
 import CodeFormatter from "./pages/CodeFormatter";
 
-const queryClient = new QueryClient();
+// Create a client
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 60 * 1000,
+    },
+  },
+});
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <div className="min-h-screen bg-gradient-to-br from-background to-secondary flex flex-col">
-        <Toaster />
-        <Sonner />
-        <BrowserRouter>
-          <Header />
-          <main className="flex-grow container mx-auto px-4 pt-20 pb-8">
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/calculator" element={<Calculator />} />
-              <Route path="/weather" element={<Weather />} />
-              <Route path="/blog" element={<Blog />} />
-              <Route path="/blog/:id" element={<BlogDetail />} />
-              <Route path="/todo" element={<TodoList />} />
-              <Route path="/qr-generator" element={<QRGenerator />} />
-              <Route path="/puzzle" element={<Puzzle />} />
-              <Route path="/currency" element={<CurrencyConverter />} />
-              <Route path="/quiz" element={<Quiz />} />
-              <Route path="/image-compressor" element={<ImageCompressor />} />
-              <Route path="/ip-finder" element={<IPFinder />} />
-              <Route path="/text-comparer" element={<TextComparer />} />
-              <Route path="/code-formatter" element={<CodeFormatter />} />
-            </Routes>
-          </main>
-          <Footer />
-        </BrowserRouter>
-      </div>
-    </TooltipProvider>
-  </QueryClientProvider>
-);
+const App = () => {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <div className="min-h-screen bg-gradient-to-br from-background to-secondary flex flex-col">
+          <Toaster />
+          <Sonner />
+          <BrowserRouter>
+            <Header />
+            <main className="flex-grow container mx-auto px-4 pt-20 pb-8">
+              <Routes>
+                <Route path="/" element={<Index />} />
+                <Route path="/calculator" element={<Calculator />} />
+                <Route path="/weather" element={<Weather />} />
+                <Route path="/blog" element={<Blog />} />
+                <Route path="/blog/:id" element={<BlogDetail />} />
+                <Route path="/todo" element={<TodoList />} />
+                <Route path="/qr-generator" element={<QRGenerator />} />
+                <Route path="/puzzle" element={<Puzzle />} />
+                <Route path="/currency" element={<CurrencyConverter />} />
+                <Route path="/quiz" element={<Quiz />} />
+                <Route path="/image-compressor" element={<ImageCompressor />} />
+                <Route path="/ip-finder" element={<IPFinder />} />
+                <Route path="/text-comparer" element={<TextComparer />} />
+                <Route path="/code-formatter" element={<CodeFormatter />} />
+              </Routes>
+            </main>
+            <Footer />
+          </BrowserRouter>
+        </div>
+      </TooltipProvider>
+    </QueryClientProvider>
+  );
+};
 
 export default App;
