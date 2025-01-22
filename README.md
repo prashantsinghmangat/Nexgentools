@@ -6,7 +6,7 @@
 
 Read My Blogs Content: https://nexgentalk.com/
 
-Know Me: [https://nexgentalk.com/](https://prashantsinghmangat.netlify.app/)
+Know Me: https://prashantsinghmangat.netlify.app/
 
 ## What technologies are used for this project?
 
