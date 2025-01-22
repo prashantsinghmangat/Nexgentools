@@ -88,28 +88,35 @@ const Index = () => {
   );
 
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="min-h-screen flex flex-col bg-gradient-to-br from-background via-background to-secondary/20">
       <Header />
       <main className="flex-grow pt-24 pb-16">
         <div className="container mx-auto px-4">
-          <section className="text-center mb-16 animate-fade-in">
-            <h1 className="text-4xl md:text-5xl font-bold mb-4">
+          <section className="text-center mb-16 space-y-6 animate-fade-in">
+            <h1 className="text-4xl md:text-6xl font-bold mb-4 bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60">
               Your Ultimate Toolkit for
-              <span className="text-primary"> Everything</span>
+              <span className="block mt-2">Everything</span>
             </h1>
-            <p className="text-xl text-gray-600 max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground max-w-2xl mx-auto leading-relaxed">
               Discover our collection of powerful tools designed to make your life easier.
               From development utilities to everyday tools, we've got you covered.
             </p>
+            <div className="w-24 h-1 bg-gradient-to-r from-primary to-primary/60 mx-auto rounded-full" />
           </section>
 
-          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {filteredTools.map((tool) => (
-              <ToolCard key={tool.path} {...tool} />
+          <section className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+            {filteredTools.map((tool, index) => (
+              <div key={tool.path} 
+                   className="opacity-0 animate-fade-in"
+                   style={{ animationDelay: `${index * 0.1}s`, animationFillMode: 'forwards' }}>
+                <ToolCard {...tool} />
+              </div>
             ))}
             {filteredTools.length === 0 && (
-              <div className="col-span-full text-center py-8 text-gray-500">
-                No tools found matching your search criteria.
+              <div className="col-span-full text-center py-12 glass-card rounded-lg">
+                <p className="text-xl text-muted-foreground">
+                  No tools found matching your search criteria.
+                </p>
               </div>
             )}
           </section>
