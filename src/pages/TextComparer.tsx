@@ -4,12 +4,23 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
 
+interface DiffChar {
+  char: string;
+  isDifferent: boolean;
+}
+
+interface DiffLine {
+  line: number;
+  chars: DiffChar[];
+  isDifferent: boolean;
+}
+
 const TextComparer = () => {
   const [text1, setText1] = useState("");
   const [text2, setText2] = useState("");
   const [differences, setDifferences] = useState<{
-    text1Lines: { line: number; text: string; isDifferent: boolean }[];
-    text2Lines: { line: number; text: string; isDifferent: boolean }[];
+    text1Lines: DiffLine[];
+    text2Lines: DiffLine[];
   }>({ text1Lines: [], text2Lines: [] });
   const { toast } = useToast();
 
@@ -27,23 +38,38 @@ const TextComparer = () => {
     const lines2 = text2.split("\n");
     const maxLines = Math.max(lines1.length, lines2.length);
 
-    const text1Lines = [];
-    const text2Lines = [];
+    const text1Lines: DiffLine[] = [];
+    const text2Lines: DiffLine[] = [];
 
     for (let i = 0; i < maxLines; i++) {
       const line1 = lines1[i] || "";
       const line2 = lines2[i] || "";
-      const isDifferent = line1 !== line2;
+      const maxLength = Math.max(line1.length, line2.length);
+      
+      const chars1: DiffChar[] = [];
+      const chars2: DiffChar[] = [];
+      let isDifferent = false;
+
+      for (let j = 0; j < maxLength; j++) {
+        const char1 = line1[j] || " ";
+        const char2 = line2[j] || " ";
+        const charDiff = char1 !== char2;
+        
+        chars1.push({ char: char1, isDifferent: charDiff });
+        chars2.push({ char: char2, isDifferent: charDiff });
+        
+        if (charDiff) isDifferent = true;
+      }
 
       text1Lines.push({
         line: i + 1,
-        text: line1,
+        chars: chars1,
         isDifferent,
       });
 
       text2Lines.push({
         line: i + 1,
-        text: line2,
+        chars: chars2,
         isDifferent,
       });
     }
@@ -69,13 +95,25 @@ const TextComparer = () => {
     </div>
   );
 
+  const renderDiffLine = (line: DiffLine) => (
+    <div key={line.line} className="leading-6">
+      {line.chars.map((char, idx) => (
+        <span
+          key={idx}
+          className={char.isDifferent ? "bg-destructive/10 text-destructive" : ""}
+        >
+          {char.char === " " ? "\u00A0" : char.char}
+        </span>
+      ))}
+    </div>
+  );
+
   return (
     <div className="container max-w-7xl mx-auto py-8 px-4">
       <Card className="p-6">
         <h1 className="text-2xl font-bold mb-6">Advanced Text Comparer</h1>
         
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          {/* Input Section */}
           <div className="space-y-2">
             <label className="block text-sm font-medium mb-2">Text 1</label>
             <Textarea
@@ -100,12 +138,10 @@ const TextComparer = () => {
           Compare Texts
         </Button>
 
-        {/* Comparison Results */}
         {differences.text1Lines.length > 0 && (
           <div className="mt-8">
             <h2 className="text-lg font-semibold mb-4">Comparison Results:</h2>
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              {/* Left comparison */}
               <div className="glass-card rounded-lg overflow-hidden">
                 <div className="p-4 bg-secondary/30 border-b border-border/50">
                   <h3 className="font-medium">Text 1</h3>
@@ -114,24 +150,12 @@ const TextComparer = () => {
                   <div className="flex min-w-full font-mono">
                     <LineNumbers count={differences.text1Lines.length} />
                     <div className="flex-1 p-4">
-                      {differences.text1Lines.map((line, idx) => (
-                        <div
-                          key={idx}
-                          className={`leading-6 ${
-                            line.isDifferent
-                              ? "bg-destructive/10 text-destructive"
-                              : ""
-                          }`}
-                        >
-                          {line.text || " "}
-                        </div>
-                      ))}
+                      {differences.text1Lines.map(renderDiffLine)}
                     </div>
                   </div>
                 </div>
               </div>
 
-              {/* Right comparison */}
               <div className="glass-card rounded-lg overflow-hidden">
                 <div className="p-4 bg-secondary/30 border-b border-border/50">
                   <h3 className="font-medium">Text 2</h3>
@@ -140,18 +164,7 @@ const TextComparer = () => {
                   <div className="flex min-w-full font-mono">
                     <LineNumbers count={differences.text2Lines.length} />
                     <div className="flex-1 p-4">
-                      {differences.text2Lines.map((line, idx) => (
-                        <div
-                          key={idx}
-                          className={`leading-6 ${
-                            line.isDifferent
-                              ? "bg-destructive/10 text-destructive"
-                              : ""
-                          }`}
-                        >
-                          {line.text || " "}
-                        </div>
-                      ))}
+                      {differences.text2Lines.map(renderDiffLine)}
                     </div>
                   </div>
                 </div>
