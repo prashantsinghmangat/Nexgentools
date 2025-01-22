@@ -2,15 +2,13 @@ import React, { useState } from 'react';
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Cloud, Sun, CloudRain, Wind } from 'lucide-react';
-import { useToast } from "@/components/ui/use-toast";
+import { useToast } from "@/hooks/use-toast";
 
 const Weather = () => {
   const [city, setCity] = useState('');
   const [weather, setWeather] = useState<any>(null);
   const [loading, setLoading] = useState(false);
   const { toast } = useToast();
-
-  const API_KEY = '89ac49a67d6f4bbce138b5c2d4eb9633'; // This is a free API key for demo purposes
 
   const fetchWeather = async () => {
     if (!city) {
@@ -25,7 +23,7 @@ const Weather = () => {
     setLoading(true);
     try {
       const response = await fetch(
-        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${API_KEY}&units=metric`
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${import.meta.env.VITE_OPENWEATHER_API_KEY}&units=metric`
       );
       const data = await response.json();
       
@@ -33,11 +31,15 @@ const Weather = () => {
         throw new Error('City not found');
       }
       
+      if (data.cod === 401) {
+        throw new Error('Invalid API key. Please check your OpenWeather API key.');
+      }
+      
       setWeather(data);
     } catch (error) {
       toast({
         title: "Error",
-        description: "Failed to fetch weather data. Please check the city name.",
+        description: error instanceof Error ? error.message : "Failed to fetch weather data. Please try again.",
         variant: "destructive",
       });
     } finally {
@@ -103,11 +105,11 @@ const Weather = () => {
             </div>
             <div className="grid grid-cols-2 gap-4 text-sm">
               <div>
-                <div className="text-gray-500">Humidity</div>
+                <div className="text-muted-foreground">Humidity</div>
                 <div className="font-medium">{weather.main.humidity}%</div>
               </div>
               <div>
-                <div className="text-gray-500">Wind Speed</div>
+                <div className="text-muted-foreground">Wind Speed</div>
                 <div className="font-medium">{weather.wind.speed} m/s</div>
               </div>
             </div>
