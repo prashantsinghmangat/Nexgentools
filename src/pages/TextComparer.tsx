@@ -3,6 +3,7 @@ import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { useToast } from "@/hooks/use-toast";
+import { AlertCircle, FileText, GitCompare } from "lucide-react";
 
 interface DiffChar {
   char: string;
@@ -51,23 +52,18 @@ const TextComparer = () => {
       const diffs2: DiffChar[] = [];
       let lineDifferent = false;
 
-      // First pass: find exact matches and differences
       for (let j = 0; j < maxLength; j++) {
         const char1 = line1[j] || "";
         const char2 = line2[j] || "";
         
-        if (char1 !== char2) {
+        const isDifferent = char1 !== char2;
+        if (isDifferent) {
           lineDifferent = true;
-          diffs1.push({ char: char1, isDifferent: true });
-          diffs2.push({ char: char2, isDifferent: true });
-        } else {
-          diffs1.push({ char: char1, isDifferent: false });
-          diffs2.push({ char: char2, isDifferent: false });
+          diffCount++;
         }
-      }
-
-      if (lineDifferent) {
-        diffCount++;
+        
+        diffs1.push({ char: char1, isDifferent });
+        diffs2.push({ char: char2, isDifferent });
       }
 
       text1Lines.push({
@@ -88,7 +84,7 @@ const TextComparer = () => {
     toast({
       title: diffCount > 0 ? "Differences Found" : "No Differences",
       description: diffCount > 0 
-        ? `Found differences in ${diffCount} line${diffCount > 1 ? 's' : ''}.`
+        ? `Found ${diffCount} character difference${diffCount > 1 ? 's' : ''}.`
         : "The texts are identical!",
     });
   };
@@ -119,67 +115,109 @@ const TextComparer = () => {
   return (
     <div className="container max-w-7xl mx-auto py-8 px-4">
       <Card className="p-6">
-        <h1 className="text-2xl font-bold mb-6">Text Comparison Tool</h1>
-        
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+        <div className="space-y-6">
           <div className="space-y-2">
-            <label className="block text-sm font-medium mb-2">Original Text</label>
-            <Textarea
-              placeholder="Enter first text..."
-              value={text1}
-              onChange={(e) => setText1(e.target.value)}
-              className="h-64 font-mono"
-            />
+            <h1 className="text-3xl font-bold">Text Compare!</h1>
+            <p className="text-muted-foreground">
+              Need a quick and easy way to compare two pieces of text and spot the differences? 
+              Text Compare! is designed for exactly that.
+            </p>
           </div>
-          <div className="space-y-2">
-            <label className="block text-sm font-medium mb-2">Modified Text</label>
-            <Textarea
-              placeholder="Enter second text..."
-              value={text2}
-              onChange={(e) => setText2(e.target.value)}
-              className="h-64 font-mono"
-            />
+
+          <div className="glass-card p-4 space-y-2">
+            <div className="flex items-center gap-2 text-primary">
+              <AlertCircle className="h-5 w-5" />
+              <h2 className="font-semibold">How It Works</h2>
+            </div>
+            <p className="text-sm text-muted-foreground">
+              Simply paste your two text versions into the provided fields. Our tool highlights 
+              additions, deletions, and modifications, making it easy to track changes.
+            </p>
           </div>
-        </div>
 
-        <Button onClick={compareTexts} className="mt-6 w-full">
-          Compare Texts
-        </Button>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                <label className="block text-sm font-medium">Original Text</label>
+              </div>
+              <Textarea
+                placeholder="Enter or paste your original text here..."
+                value={text1}
+                onChange={(e) => setText1(e.target.value)}
+                className="h-64 font-mono"
+              />
+            </div>
+            <div className="space-y-2">
+              <div className="flex items-center gap-2">
+                <FileText className="h-4 w-4" />
+                <label className="block text-sm font-medium">Modified Text</label>
+              </div>
+              <Textarea
+                placeholder="Enter or paste your modified text here..."
+                value={text2}
+                onChange={(e) => setText2(e.target.value)}
+                className="h-64 font-mono"
+              />
+            </div>
+          </div>
 
-        {differences.text1Lines.length > 0 && (
-          <div className="mt-8">
-            <h2 className="text-lg font-semibold mb-4">Comparison Results:</h2>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-              <div className="glass-card rounded-lg overflow-hidden">
-                <div className="p-4 bg-secondary/30 border-b border-border/50">
-                  <h3 className="font-medium">Original Text</h3>
-                </div>
-                <div className="overflow-x-auto">
-                  <div className="flex min-w-full font-mono p-4">
-                    <LineNumbers count={differences.text1Lines.length} />
-                    <div className="flex-1 pl-4">
-                      {differences.text1Lines.map(renderDiffLine)}
+          <Button 
+            onClick={compareTexts} 
+            className="w-full"
+            size="lg"
+          >
+            <GitCompare className="mr-2 h-4 w-4" />
+            Compare Texts
+          </Button>
+
+          {differences.text1Lines.length > 0 && (
+            <div className="mt-8 space-y-4">
+              <h2 className="text-lg font-semibold">Comparison Results:</h2>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <div className="glass-card rounded-lg overflow-hidden">
+                  <div className="p-4 bg-secondary/30 border-b border-border/50">
+                    <h3 className="font-medium">Original Text</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <div className="flex min-w-full font-mono p-4">
+                      <LineNumbers count={differences.text1Lines.length} />
+                      <div className="flex-1 pl-4">
+                        {differences.text1Lines.map(renderDiffLine)}
+                      </div>
                     </div>
                   </div>
                 </div>
-              </div>
 
-              <div className="glass-card rounded-lg overflow-hidden">
-                <div className="p-4 bg-secondary/30 border-b border-border/50">
-                  <h3 className="font-medium">Modified Text</h3>
-                </div>
-                <div className="overflow-x-auto">
-                  <div className="flex min-w-full font-mono p-4">
-                    <LineNumbers count={differences.text2Lines.length} />
-                    <div className="flex-1 pl-4">
-                      {differences.text2Lines.map(renderDiffLine)}
+                <div className="glass-card rounded-lg overflow-hidden">
+                  <div className="p-4 bg-secondary/30 border-b border-border/50">
+                    <h3 className="font-medium">Modified Text</h3>
+                  </div>
+                  <div className="overflow-x-auto">
+                    <div className="flex min-w-full font-mono p-4">
+                      <LineNumbers count={differences.text2Lines.length} />
+                      <div className="flex-1 pl-4">
+                        {differences.text2Lines.map(renderDiffLine)}
+                      </div>
                     </div>
                   </div>
                 </div>
               </div>
             </div>
+          )}
+
+          <div className="glass-card p-4 space-y-2">
+            <div className="flex items-center gap-2 text-primary">
+              <AlertCircle className="h-5 w-5" />
+              <h2 className="font-semibold">Why Use Text Compare?</h2>
+            </div>
+            <ul className="list-disc list-inside space-y-1 text-sm text-muted-foreground">
+              <li>Proofreading and Editing: Quickly spot edits and verify revisions.</li>
+              <li>Coding and Development: Do a quick diff check to identify changes in code or config files.</li>
+              <li>Version Tracking: Compare different document versions to trace updates in technical documentation, contracts, and more.</li>
+            </ul>
           </div>
-        )}
+        </div>
       </Card>
     </div>
   );
