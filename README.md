@@ -1,19 +1,35 @@
-# Welcome to your NexGenTools Project Created by Prashant Singh Mangat
-
-## Project info
 
 **Deployed Demo URL**: https://nexgentools.netlify.app/
 
-Read My Blogs Content: https://nexgentalk.com/
+# NexGenStocks
 
-Know Me: https://prashantsinghmangat.netlify.app/
+## Welcome to Indian Stocks Tracker  
+### Created by Prashant Singh Mangat  
 
-## What technologies are used for this project?
+---
 
-This project is built with .
+## Project Info  
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+**Deployed Demo URL**:  <a href="https://nexgentools.netlify.app/" target="_blank" rel="noopener noreferrer">nexgentools.netlify.app</a>
+
+- **Read My Blogs**:  
+  [nexgentalk.com](https://nexgentalk.com/)  
+
+- **Know More About Me**:  
+  [prashantsinghmangat.netlify.app](https://prashantsinghmangat.netlify.app/)  
+
+---
+
+## Technologies Used  
+
+This project is built using the following technologies:  
+
+- **Vite**  
+- **TypeScript**  
+- **React**  
+- **Tailwind CSS**  
+
+---
+
+Thank you for checking out this project! Feel free to explore the links provided above to learn more.
+
