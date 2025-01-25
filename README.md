@@ -1,9 +1,9 @@
 
 **Deployed Demo URL**: https://nexgentools.netlify.app/
 
-# NexGenStocks
+# NexGenTools
 
-## Welcome to Indian Stocks Tracker  
+## Welcome to NexGenTools Utilities App  
 ### Created by Prashant Singh Mangat  
 
 ---
